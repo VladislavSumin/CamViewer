@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefWidth="200" style="-fx-background-color: #ADFF2F;" AnchorPane.bottomAnchor="0.0"
+            AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ru.vladislavsumin.camviewer.FilesWindowController">
+    <children>
+        <HBox prefHeight="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Button mnemonicParsing="false" onMouseClicked="#prevDate" text="&lt;"/>
+                <DatePicker fx:id="date" prefHeight="25.0" prefWidth="200.0"/>
+                <Button mnemonicParsing="false" onMouseClicked="#nextDate" text="&gt;"/>
+            </children>
+        </HBox>
+        <ListView fx:id="fileList" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0"/>
+    </children>
+</AnchorPane>
