@@ -2,7 +2,8 @@ package ru.vladislavsumin.camviewer
 
 class Static {
     companion object {
-        val recordManager = RecordManager("/Volumes/Data 2TB/Mod/")
+        val recordManager = RecordManager(Config.config.getString("path"))
         val player = VLCJPlayer()
+
     }
 }
