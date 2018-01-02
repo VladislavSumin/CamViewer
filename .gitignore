@@ -4,3 +4,4 @@
 /out/
 *.jar
 *.json
+/log/
