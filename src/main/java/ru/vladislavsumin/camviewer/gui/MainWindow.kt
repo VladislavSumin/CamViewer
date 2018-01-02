@@ -1,4 +1,4 @@
-package ru.vladislavsumin.camviewer
+package ru.vladislavsumin.camviewer.gui
 
 import javafx.application.Application
 import javafx.application.Platform

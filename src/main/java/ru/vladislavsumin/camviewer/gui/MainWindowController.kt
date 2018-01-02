@@ -1,11 +1,11 @@
-package ru.vladislavsumin.camviewer
+package ru.vladislavsumin.camviewer.gui
 
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
 import javafx.fxml.Initializable
 import javafx.scene.Parent
-import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
+import ru.vladislavsumin.camviewer.Static
 import java.net.URL
 import java.util.*
 

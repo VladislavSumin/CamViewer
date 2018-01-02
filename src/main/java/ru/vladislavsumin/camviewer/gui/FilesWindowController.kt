@@ -1,4 +1,4 @@
-package ru.vladislavsumin.camviewer
+package ru.vladislavsumin.camviewer.gui
 
 
 import javafx.collections.FXCollections
@@ -6,6 +6,8 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.DatePicker
 import javafx.scene.control.ListView
+import ru.vladislavsumin.camviewer.RecordManager
+import ru.vladislavsumin.camviewer.Static
 import java.net.URL
 import java.time.LocalDate
 import java.util.*

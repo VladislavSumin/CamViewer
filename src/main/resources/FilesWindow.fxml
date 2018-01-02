@@ -10,7 +10,7 @@
 
 <AnchorPane prefWidth="200" style="-fx-background-color: #ADFF2F;" AnchorPane.bottomAnchor="0.0"
             AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ru.vladislavsumin.camviewer.FilesWindowController">
+            fx:controller="ru.vladislavsumin.camviewer.gui.FilesWindowController">
     <children>
         <HBox prefHeight="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
