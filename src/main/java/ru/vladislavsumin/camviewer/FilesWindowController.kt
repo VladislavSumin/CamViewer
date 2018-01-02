@@ -6,7 +6,6 @@ import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.DatePicker
 import javafx.scene.control.ListView
-import javafx.scene.input.MouseEvent
 import java.net.URL
 import java.time.LocalDate
 import java.util.*
@@ -28,10 +27,8 @@ class FilesWindowController : Initializable {
 
         fileList.selectionModel.selectedItemProperty().addListener({ _, _, newValue ->
             println(newValue.path.absolutePath)
-            //play(newValue.path.absolutePath, false)
             Static.player.play(newValue.path.absolutePath)
         })
-
     }
 
     private fun updateFiles(year: Int, mont: Int, day: Int) {
@@ -40,12 +37,11 @@ class FilesWindowController : Initializable {
         fileList.items = items
     }
 
-    fun prevDate(mouseEvent: MouseEvent) {
+    fun prevDate() {
         date.value = date.value.minusDays(1)
     }
 
-    fun nextDate(mouseEvent: MouseEvent) {
+    fun nextDate() {
         date.value = date.value.plusDays(1)
     }
-
 }

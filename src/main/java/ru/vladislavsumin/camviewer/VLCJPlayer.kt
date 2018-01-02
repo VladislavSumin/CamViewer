@@ -25,9 +25,6 @@ import java.nio.ByteBuffer
 
 
 class VLCJPlayer {
-    //    private static final String PATH_TO_VIDEO = "/Users/vladislavsumin/Desktop/кинцо/Misfits.S03E06.720p.WEB-DL.Rus.Eng.HDCLUB.mkv";
-    private val PATH_TO_VIDEO = "/Users/vladislavsumin/doc/20170731214224.h264"
-
     private var imageView: ImageView? = null
 
     private var mediaPlayerComponent: DirectMediaPlayerComponent? = null
@@ -46,7 +43,7 @@ class VLCJPlayer {
         NativeDiscovery().discover()
         mediaPlayerComponent = CanvasPlayerComponent()
         playerHolder = Pane()
-        playerHolder!!.setStyle("-fx-background-color: #FFFFFF;");
+        playerHolder!!.setStyle("-fx-background-color: #FFFFFF;")
         AnchorPane.setBottomAnchor(playerHolder, 0.0)
         AnchorPane.setLeftAnchor(playerHolder, 0.0)
         AnchorPane.setRightAnchor(playerHolder, 0.0)
@@ -54,11 +51,6 @@ class VLCJPlayer {
         videoSourceRatioProperty = SimpleFloatProperty(0.4f)
         pixelFormat = PixelFormat.getByteBgraPreInstance()
         initializeImageView()
-        //        mediaPlayerComponent.getMediaPlayer().addMediaOptions("demux=h264");
-        //        mediaPlayerComponent.getMediaPlayer().prepareMedia(PATH_TO_VIDEO);
-        //        mediaPlayerComponent.getMediaPlayer().start();
-        //mediaPlayerComponent!!.mediaPlayer.playMedia(PATH_TO_VIDEO, *arrayOf(":demux=h264"))
-
         mediaPlayerComponent!!.getMediaPlayer().rate = 0.6f
     }
 
@@ -69,11 +61,14 @@ class VLCJPlayer {
         imageView = ImageView(writableImage)
         playerHolder!!.children.add(imageView)
 
-        playerHolder!!.widthProperty().addListener { observable, oldValue, newValue -> fitImageViewSize(newValue.toFloat(), playerHolder!!.height.toFloat()) }
+        playerHolder!!.widthProperty()
+                .addListener { _, _, newValue -> fitImageViewSize(newValue.toFloat(), playerHolder!!.height.toFloat()) }
 
-        playerHolder!!.heightProperty().addListener { observable, oldValue, newValue -> fitImageViewSize(playerHolder!!.width.toFloat(), newValue.toFloat()) }
+        playerHolder!!.heightProperty()
+                .addListener { _, _, newValue -> fitImageViewSize(playerHolder!!.width.toFloat(), newValue.toFloat()) }
 
-        videoSourceRatioProperty!!.addListener { observable, oldValue, newValue -> fitImageViewSize(playerHolder!!.width.toFloat(), playerHolder!!.height.toFloat()) }
+        videoSourceRatioProperty!!
+                .addListener { _, _, _ -> fitImageViewSize(playerHolder!!.width.toFloat(), playerHolder!!.height.toFloat()) }
     }
 
     private fun fitImageViewSize(width: Float, height: Float) {

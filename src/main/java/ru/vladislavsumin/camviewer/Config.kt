@@ -4,7 +4,6 @@ import org.json.JSONObject
 import java.io.*
 
 class Config {
-
     companion object {
         var config: JSONObject = JSONObject()
             private set
