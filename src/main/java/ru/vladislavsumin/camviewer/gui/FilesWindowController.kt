@@ -35,7 +35,7 @@ class FilesWindowController : Initializable {
 
     private fun updateFiles(year: Int, mont: Int, day: Int) {
         val items = FXCollections.observableArrayList<RecordManager.Record>()
-        items.addAll(Static.recordManager.getSortedList(year, mont, day, Static.recordManager.cams.keys))
+        items.addAll(Static.recordManager.getSortedList(year, mont, day))
         fileList.items = items
     }
 

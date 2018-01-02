@@ -6,6 +6,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class RecordManager(private val path: String) {
+    //TODO реализовать блокировки
+    //TODO сделать загрузку в отдельном потоке
     data class Record(
             val path: File,
             val camName: String,
@@ -16,7 +18,6 @@ class RecordManager(private val path: String) {
     }
 
     private val list: MutableMap<String, MutableList<Record>> = HashMap()
-    val cams: Map<String, List<Record>> = list
 
     init {
         updateRecords()
@@ -25,7 +26,9 @@ class RecordManager(private val path: String) {
     private fun updateRecords() {
         list.clear()
         val rootDir = File(path)
-        for (cam in rootDir.listFiles({ file -> file.isDirectory })) {
+        val cams = rootDir.listFiles({ file -> file.isDirectory }) ?: return
+        //TODO Добавить логирование + визуальную ошибку
+        for (cam in cams) {
             val listFiles = File("${cam.absolutePath}/1/").listFiles()
             if (listFiles.isEmpty()) continue
             val listRecord = ArrayList<Record>(listFiles.size)
@@ -45,7 +48,7 @@ class RecordManager(private val path: String) {
         }
     }
 
-    fun getSortedList(year: Int, month: Int, day: Int, cams: Set<String>): List<Record> {
+    fun getSortedList(year: Int, month: Int, day: Int, cams: Set<String> = list.keys): List<Record> {
         println("year $year, month $month")
         val data: MutableList<Record> = LinkedList()
         for (key in cams) {
