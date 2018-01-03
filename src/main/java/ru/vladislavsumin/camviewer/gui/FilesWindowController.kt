@@ -28,8 +28,10 @@ class FilesWindowController : Initializable {
         })
 
         fileList.selectionModel.selectedItemProperty().addListener({ _, _, newValue ->
-            println(newValue.path.absolutePath)
-            Static.player.play(newValue.path.absolutePath)
+            if (newValue == null) return@addListener
+            val path: String = newValue.path.absolutePath
+            println(path)
+            Static.player.play(path)
         })
     }
 

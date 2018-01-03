@@ -37,6 +37,14 @@ class MainWindow : Application() {
         @JvmStatic
         fun main(args: Array<String>) {
             log.info("==== MAIN ENTER POINT ====")
+
+            //TODO подумать над этим
+            Thread.setDefaultUncaughtExceptionHandler({ t, e ->
+                log.error("GLOBAL FALL on thread ${t.name}", e)
+                Platform.exit()
+                System.exit(0)
+            })
+
             launch(MainWindow::class.java)
         }
     }
