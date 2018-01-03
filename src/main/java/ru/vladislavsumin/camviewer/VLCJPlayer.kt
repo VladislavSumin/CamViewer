@@ -27,7 +27,7 @@ import java.nio.ByteBuffer
 class VLCJPlayer {
     private var imageView: ImageView? = null
 
-    private var mediaPlayerComponent: DirectMediaPlayerComponent? = null
+    var mediaPlayerComponent: DirectMediaPlayerComponent? = null
 
     private var writableImage: WritableImage? = null
 
@@ -44,6 +44,7 @@ class VLCJPlayer {
         mediaPlayerComponent = CanvasPlayerComponent()
         playerHolder = Pane()
         playerHolder!!.setStyle("-fx-background-color: #FFFFFF;")
+        //TODO Убрать playerHolder
         AnchorPane.setBottomAnchor(playerHolder, 0.0)
         AnchorPane.setLeftAnchor(playerHolder, 0.0)
         AnchorPane.setRightAnchor(playerHolder, 0.0)
