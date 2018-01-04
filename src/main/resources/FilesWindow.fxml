@@ -19,7 +19,13 @@
                 <Button mnemonicParsing="false" onMouseClicked="#nextDate" text="&gt;"/>
             </children>
         </HBox>
-        <ListView fx:id="fileList" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+        <ListView fx:id="fileList" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0"
                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0"/>
+        <BorderPane prefHeight="25.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                    AnchorPane.rightAnchor="0.0">
+            <center>
+                <Button fx:id="update" onMouseClicked="#update" mnemonicParsing="false" text="Update" BorderPane.alignment="CENTER"/>
+            </center>
+        </BorderPane>
     </children>
 </AnchorPane>

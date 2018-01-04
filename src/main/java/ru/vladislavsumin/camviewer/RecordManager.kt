@@ -4,9 +4,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 class RecordManager(private val path: String) {
-    //TODO реализовать блокировки
     //TODO сделать загрузку в отдельном потоке
     data class Record(
             val path: File,
@@ -17,13 +17,30 @@ class RecordManager(private val path: String) {
         }
     }
 
-    private val list: MutableMap<String, MutableList<Record>> = HashMap()
-
-    init {
-        updateRecords()
+    interface OnDataUpdateListener {
+        fun onDataUpdate()
     }
 
-    private fun updateRecords() {
+    private val list: MutableMap<String, MutableList<Record>> = HashMap()
+    private val listeners: MutableSet<OnDataUpdateListener> = HashSet()
+    @Volatile private var update = false
+
+    init {
+        //updateRecords()
+    }
+
+    fun updateRecordsFromNewThread(afterDataUpdate: (() -> Unit)? = null) {
+        Thread({
+            updateRecords()
+            afterDataUpdate?.invoke()
+        }, "RecordManager Update").start()
+    }
+
+    fun updateRecords() {
+        synchronized(list) {
+            if (update) return
+            update = true
+        }
         list.clear()
         val rootDir = File(path)
         val cams = rootDir.listFiles({ file -> file.isDirectory }) ?: return
@@ -46,19 +63,48 @@ class RecordManager(private val path: String) {
             }
             list[cam.name] = listRecord
         }
+        synchronized(list) {
+            update = false
+        }
+        synchronized(listeners) {
+            listeners.forEach({ it.onDataUpdate() })
+        }
     }
 
     fun getSortedList(year: Int, month: Int, day: Int, cams: Set<String> = list.keys): List<Record> {
-        println("year $year, month $month")
-        val data: MutableList<Record> = LinkedList()
-        for (key in cams) {
-            list[key]!!.stream().filter({
-                it.timestamp.get(Calendar.YEAR) == year && it.timestamp.get(Calendar.MONTH) == month &&
-                        it.timestamp.get(Calendar.DAY_OF_MONTH) == day
-            }).forEach({ data.add(it) })
+        synchronized(list) {
+            if (update) return emptyList()
+            println("year $year, month $month")
+            val data: MutableList<Record> = LinkedList()
+            for (key in cams) {
+                list[key]!!.stream().filter({
+                    it.timestamp.get(Calendar.YEAR) == year && it.timestamp.get(Calendar.MONTH) == month &&
+                            it.timestamp.get(Calendar.DAY_OF_MONTH) == day
+                }).forEach({ data.add(it) })
+            }
+            data.sortBy { record -> record.timestamp }
+            data.reverse()
+            return data
         }
-        data.sortBy { record -> record.timestamp }
-        data.reverse()
-        return data
+    }
+
+    fun addOnDataChangeListener(listener: () -> Unit) {
+        addOnDataChangeListener(object : OnDataUpdateListener {
+            override fun onDataUpdate() {
+                listener.invoke()
+            }
+        })
+    }
+
+    fun addOnDataChangeListener(listener: OnDataUpdateListener) {
+        synchronized(listeners) {
+            listeners.add(listener)
+        }
+    }
+
+    fun removeOnDataChangeListener(listener: OnDataUpdateListener) {
+        synchronized(listeners) {
+            listeners.remove(listener)
+        }
     }
 }

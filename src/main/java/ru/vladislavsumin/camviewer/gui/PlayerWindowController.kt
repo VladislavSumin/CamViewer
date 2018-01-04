@@ -16,6 +16,7 @@ class PlayerWindowController : Initializable {
     @FXML private lateinit var slider: Slider
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
+        //TODO Посмотреть причину долгой загрузки
         player.children.add(Static.player.playerHolder)
 
 
