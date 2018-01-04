@@ -1,49 +1,35 @@
 package ru.vladislavsumin.camviewer
 
 import com.sun.jna.Memory
-import javafx.application.Application
 import javafx.application.Platform
 import javafx.beans.property.FloatProperty
 import javafx.beans.property.SimpleFloatProperty
-import javafx.event.EventHandler
-import javafx.geometry.Rectangle2D
-import javafx.scene.Scene
 import javafx.scene.image.*
-import javafx.scene.layout.*
-import javafx.scene.paint.Paint
+import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.Pane
 import javafx.stage.Screen
-import javafx.stage.Stage
-import javafx.stage.WindowEvent
 import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent
 import uk.co.caprica.vlcj.discovery.NativeDiscovery
 import uk.co.caprica.vlcj.player.direct.BufferFormat
 import uk.co.caprica.vlcj.player.direct.BufferFormatCallback
 import uk.co.caprica.vlcj.player.direct.DirectMediaPlayer
 import uk.co.caprica.vlcj.player.direct.format.RV32BufferFormat
-
 import java.nio.ByteBuffer
 
 
 class VLCJPlayer {
     private var imageView: ImageView? = null
-
-    var mediaPlayerComponent: DirectMediaPlayerComponent? = null
-
+    var mediaPlayerComponent: DirectMediaPlayerComponent
     private var writableImage: WritableImage? = null
-
-    var playerHolder: Pane? = null
+    var playerHolder: Pane
         private set
-
-    private var pixelFormat: WritablePixelFormat<ByteBuffer>? = null
-
-    private var videoSourceRatioProperty: FloatProperty? = null
-
+    private var pixelFormat: WritablePixelFormat<ByteBuffer>
+    private var videoSourceRatioProperty: FloatProperty
 
     init {
         NativeDiscovery().discover()
         mediaPlayerComponent = CanvasPlayerComponent()
         playerHolder = Pane()
-        playerHolder!!.setStyle("-fx-background-color: #FFFFFF;")
         //TODO Убрать playerHolder
         AnchorPane.setBottomAnchor(playerHolder, 0.0)
         AnchorPane.setLeftAnchor(playerHolder, 0.0)
@@ -52,7 +38,7 @@ class VLCJPlayer {
         videoSourceRatioProperty = SimpleFloatProperty(0.4f)
         pixelFormat = PixelFormat.getByteBgraPreInstance()
         initializeImageView()
-        mediaPlayerComponent!!.getMediaPlayer().rate = 0.6f
+        mediaPlayerComponent.mediaPlayer.rate = 0.6f
     }
 
     private fun initializeImageView() {
@@ -60,24 +46,24 @@ class VLCJPlayer {
         writableImage = WritableImage(visualBounds.width.toInt(), visualBounds.height.toInt())
 
         imageView = ImageView(writableImage)
-        playerHolder!!.children.add(imageView)
+        playerHolder.children.add(imageView)
 
-        playerHolder!!.widthProperty()
-                .addListener { _, _, newValue -> fitImageViewSize(newValue.toFloat(), playerHolder!!.height.toFloat()) }
+        playerHolder.widthProperty()
+                .addListener { _, _, newValue -> fitImageViewSize(newValue.toFloat(), playerHolder.height.toFloat()) }
 
-        playerHolder!!.heightProperty()
-                .addListener { _, _, newValue -> fitImageViewSize(playerHolder!!.width.toFloat(), newValue.toFloat()) }
+        playerHolder.heightProperty()
+                .addListener { _, _, newValue -> fitImageViewSize(playerHolder.width.toFloat(), newValue.toFloat()) }
 
-        videoSourceRatioProperty!!
-                .addListener { _, _, _ -> fitImageViewSize(playerHolder!!.width.toFloat(), playerHolder!!.height.toFloat()) }
+        videoSourceRatioProperty
+                .addListener { _, _, _ -> fitImageViewSize(playerHolder.width.toFloat(), playerHolder.height.toFloat()) }
     }
 
     private fun fitImageViewSize(width: Float, height: Float) {
         Platform.runLater {
-            val fitHeight = videoSourceRatioProperty!!.get() * width
+            val fitHeight = videoSourceRatioProperty.get() * width
             if (fitHeight > height) {
                 imageView!!.fitHeight = height.toDouble()
-                val fitWidth = (height / videoSourceRatioProperty!!.get()).toDouble()
+                val fitWidth = (height / videoSourceRatioProperty.get()).toDouble()
                 imageView!!.fitWidth = fitWidth
                 imageView!!.x = (width - fitWidth) / 2
                 imageView!!.y = 0.0
@@ -121,12 +107,12 @@ class VLCJPlayer {
     private inner class CanvasBufferFormatCallback : BufferFormatCallback {
         override fun getBufferFormat(sourceWidth: Int, sourceHeight: Int): BufferFormat {
             val visualBounds = Screen.getPrimary().visualBounds
-            Platform.runLater { videoSourceRatioProperty!!.set(sourceHeight.toFloat() / sourceWidth.toFloat()) }
+            Platform.runLater { videoSourceRatioProperty.set(sourceHeight.toFloat() / sourceWidth.toFloat()) }
             return RV32BufferFormat(visualBounds.width.toInt(), visualBounds.height.toInt())
         }
     }
 
     fun play(path: String) {
-        mediaPlayerComponent!!.mediaPlayer.playMedia(path, *arrayOf(":demux=h264"))
+        mediaPlayerComponent.mediaPlayer.playMedia(path, ":demux=h264")
     }
 }
