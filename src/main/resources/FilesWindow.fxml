@@ -8,23 +8,30 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefWidth="200" style="-fx-background-color: #ADFF2F;" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ru.vladislavsumin.camviewer.gui.FilesWindowController">
+<AnchorPane prefWidth="200" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.vladislavsumin.camviewer.gui.FilesWindowController">
     <children>
-        <HBox prefHeight="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox prefHeight="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <Button mnemonicParsing="false" onMouseClicked="#prevDate" text="&lt;"/>
                 <DatePicker fx:id="date" prefHeight="25.0" prefWidth="200.0"/>
                 <Button mnemonicParsing="false" onMouseClicked="#nextDate" text="&gt;"/>
             </children>
+            <padding>
+                <Insets bottom="0.5" left="0.5" right="0.5" top="0.5"/>
+            </padding>
         </HBox>
-        <ListView fx:id="fileList" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0"
-                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0"/>
-        <BorderPane prefHeight="25.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+        <ListView fx:id="fileList" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
+            <padding>
+                <Insets bottom="0.5" left="0.5" right="0.5" top="0.5"/>
+            </padding>
+        </ListView>
+        <BorderPane prefHeight="52.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                     AnchorPane.rightAnchor="0.0">
             <center>
-                <Button fx:id="update" onMouseClicked="#update" mnemonicParsing="false" text="Update" BorderPane.alignment="CENTER"/>
+                <Button fx:id="update" mnemonicParsing="false" onMouseClicked="#update" text="Update"
+                        BorderPane.alignment="CENTER"/>
             </center>
         </BorderPane>
     </children>
