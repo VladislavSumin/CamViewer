@@ -22,7 +22,7 @@ class MainWindow : Application() {
 
         root.title = "Cam viewer"
         root.onCloseRequest = EventHandler {
-            log.info("onCloseRequest received")
+            log.debug("onCloseRequest received")
             Platform.exit()
             System.exit(0)
         }

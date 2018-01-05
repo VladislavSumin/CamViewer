@@ -1,5 +1,6 @@
 package ru.vladislavsumin.camviewer
 
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -7,10 +8,9 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
 class RecordManager(private val path: String) {
-    //TODO сделать загрузку в отдельном потоке
     data class Record(
             val path: File,
-            val camName: String,
+            @Suppress("MemberVisibilityCanPrivate") val camName: String,
             val timestamp: Calendar) {
         override fun toString(): String {
             return "$camName ${SimpleDateFormat("HH:mm:ss").format(timestamp.time)}"
@@ -21,13 +21,10 @@ class RecordManager(private val path: String) {
         fun onDataUpdate()
     }
 
+    private val log = LoggerFactory.getLogger(RecordManager::class.java)
     private val list: MutableMap<String, MutableList<Record>> = HashMap()
     private val listeners: MutableSet<OnDataUpdateListener> = HashSet()
     @Volatile private var update = false
-
-    init {
-        //updateRecords()
-    }
 
     fun updateRecordsFromNewThread(afterDataUpdate: (() -> Unit)? = null) {
         Thread({
@@ -36,15 +33,23 @@ class RecordManager(private val path: String) {
         }, "RecordManager Update").start()
     }
 
-    fun updateRecords() {
+    private fun updateRecords() {
         synchronized(list) {
-            if (update) return
+            if (update) {
+                log.debug("Files already updating")
+                return
+            }
             update = true
         }
+        log.debug("Start update files")
         list.clear()
         val rootDir = File(path)
-        val cams = rootDir.listFiles({ file -> file.isDirectory }) ?: return
-        //TODO Добавить логирование + визуальную ошибку
+        val cams = rootDir.listFiles({ file -> file.isDirectory })
+        if (cams == null) {
+            log.warn("Files directory {} no exist", path)
+            synchronized(list) { update = false }
+            return
+        }
         for (cam in cams) {
             val listFiles = File("${cam.absolutePath}/1/").listFiles()
             if (listFiles.isEmpty()) continue
@@ -63,18 +68,20 @@ class RecordManager(private val path: String) {
             }
             list[cam.name] = listRecord
         }
-        synchronized(list) {
-            update = false
-        }
+        synchronized(list) { update = false }
+        log.debug("Files updated")
         synchronized(listeners) {
+            log.debug("Invoke onDataUpdate from {} listeners", listeners.size)
             listeners.forEach({ it.onDataUpdate() })
         }
     }
 
     fun getSortedList(year: Int, month: Int, day: Int, cams: Set<String> = list.keys): List<Record> {
         synchronized(list) {
-            if (update) return emptyList()
-            println("year $year, month $month")
+            if (update) {
+                log.debug("Invoke getSortedList on files update")
+                return emptyList()
+            }
             val data: MutableList<Record> = LinkedList()
             for (key in cams) {
                 list[key]!!.stream().filter({
