@@ -1,5 +1,6 @@
 package ru.vladislavsumin.camviewer.gui
 
+import javafx.beans.value.ChangeListener
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import javafx.scene.control.Slider
@@ -11,27 +12,33 @@ import java.net.URL
 import java.util.*
 
 class PlayerWindowController : Initializable {
-    val mediaPlayerComponent = Static.player.mediaPlayerComponent!!
+    private val mediaPlayer = Static.player.mediaPlayerComponent.mediaPlayer
     @FXML private lateinit var player: Pane
     @FXML private lateinit var slider: Slider
+
+    private val sliderListener = ChangeListener<Number> { _, _, newValue ->
+        mediaPlayer.position = newValue.toFloat()
+    }
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         //TODO Посмотреть причину долгой загрузки
         player.children.add(Static.player.playerHolder)
 
-
-        slider.isDisable = true
         slider.max = 1.0
+        slider.valueProperty().addListener(sliderListener)
 
-        mediaPlayerComponent.mediaPlayer.addMediaPlayerEventListener(object : MediaPlayerEventAdapter() {
+        mediaPlayer.addMediaPlayerEventListener(object : MediaPlayerEventAdapter() {
             override fun positionChanged(mediaPlayer: MediaPlayer, newPosition: Float) {
+                //TODO этот мегакостыль
+                slider.valueProperty().removeListener(sliderListener)
                 slider.value = newPosition.toDouble()
+                slider.valueProperty().addListener(sliderListener)
             }
         })
     }
 
     fun pause() {
-        mediaPlayerComponent.mediaPlayer.run {
+        mediaPlayer.run {
             if (isPlaying) pause()
             else play()
         }
