@@ -8,6 +8,7 @@ import javafx.scene.image.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.Pane
 import javafx.stage.Screen
+import org.slf4j.LoggerFactory
 import uk.co.caprica.vlcj.component.DirectMediaPlayerComponent
 import uk.co.caprica.vlcj.discovery.NativeDiscovery
 import uk.co.caprica.vlcj.player.direct.BufferFormat
@@ -18,6 +19,7 @@ import java.nio.ByteBuffer
 
 
 class VLCJPlayer {
+    private val log = LoggerFactory.getLogger(VLCJPlayer::class.java)
     private var imageView: ImageView? = null
     var mediaPlayerComponent: DirectMediaPlayerComponent
     private var writableImage: WritableImage? = null
@@ -27,7 +29,9 @@ class VLCJPlayer {
     private var videoSourceRatioProperty: FloatProperty
 
     init {
+        log.debug("Start native discovery")
         NativeDiscovery().discover()
+        log.debug("Finish native discovery")
         mediaPlayerComponent = CanvasPlayerComponent()
         playerHolder = Pane()
         //TODO Убрать playerHolder
@@ -39,6 +43,7 @@ class VLCJPlayer {
         pixelFormat = PixelFormat.getByteBgraPreInstance()
         initializeImageView()
         mediaPlayerComponent.mediaPlayer.rate = 0.6f
+        log.debug("Finish player load")
     }
 
     private fun initializeImageView() {
@@ -78,25 +83,15 @@ class VLCJPlayer {
 
     private inner class CanvasPlayerComponent : DirectMediaPlayerComponent(CanvasBufferFormatCallback()) {
 
-        internal var pixelWriter: PixelWriter? = null
-
-        private val pw: PixelWriter?
-            get() {
-                if (pixelWriter == null) {
-                    pixelWriter = writableImage!!.pixelWriter
-                }
-                return pixelWriter
-            }
+        private val pw: PixelWriter by lazy(LazyThreadSafetyMode.NONE) { writableImage!!.pixelWriter!! }
 
         override fun display(mediaPlayer: DirectMediaPlayer?, nativeBuffers: Array<Memory>?, bufferFormat: BufferFormat?) {
-            if (writableImage == null) {
-                return
-            }
+            if (writableImage == null) return
             Platform.runLater {
                 val nativeBuffer = mediaPlayer!!.lock()[0]
                 try {
                     val byteBuffer = nativeBuffer.getByteBuffer(0, nativeBuffer.size())
-                    pw!!.setPixels(0, 0, bufferFormat!!.width, bufferFormat.height, pixelFormat, byteBuffer, bufferFormat.pitches[0])
+                    pw.setPixels(0, 0, bufferFormat!!.width, bufferFormat.height, pixelFormat, byteBuffer, bufferFormat.pitches[0])
                 } finally {
                     mediaPlayer.unlock()
                 }
