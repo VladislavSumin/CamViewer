@@ -29,6 +29,7 @@ class Config {
         private fun createDefaultConfig() {
             config = JSONObject()
             config.put("path", "path")
+            config.put("save_path", "path")
 
             val writer = FileWriter(CONFIG_PATH)
             writer.write(config.toString())
