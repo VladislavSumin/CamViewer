@@ -7,11 +7,19 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashSet
 
+/**
+ * Просмотр и каталогизирование записей с камер
+ */
 class RecordManager(private val path: String) {
+    /**
+     * Содержит информацию о видеозаписи
+     */
     data class Record(
             val path: File,
             @Suppress("MemberVisibilityCanPrivate") val camName: String,
             val timestamp: Calendar) {
+
+        //Используется для вывода названия записи
         override fun toString(): String {
             return "$camName ${SimpleDateFormat("HH:mm:ss").format(timestamp.time)}"
         }
@@ -24,8 +32,13 @@ class RecordManager(private val path: String) {
     private val log = LoggerFactory.getLogger(RecordManager::class.java)
     private val list: MutableMap<String, MutableList<Record>> = HashMap()
     private val listeners: MutableSet<OnDataUpdateListener> = HashSet()
-    @Volatile private var update = false
+    @Volatile
+    private var update = false
 
+    /**
+     * Обновляет список записей из отдельного потока
+     * @param afterDataUpdate - вызывается после обновления списка
+     */
     fun updateRecordsFromNewThread(afterDataUpdate: (() -> Unit)? = null) {
         Thread({
             updateRecords()
