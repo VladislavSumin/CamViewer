@@ -29,10 +29,13 @@
         </ListView>
         <BorderPane prefHeight="52.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
                     AnchorPane.rightAnchor="0.0">
-            <center>
+            <right>
                 <Button fx:id="update" mnemonicParsing="false" onMouseClicked="#update" text="Update"
                         BorderPane.alignment="CENTER"/>
-            </center>
+            </right>
+            <left>
+                <Button mnemonicParsing="false" text="Saved" BorderPane.alignment="CENTER" onMouseClicked="#changeMode"/>
+            </left>
         </BorderPane>
     </children>
 </AnchorPane>

@@ -14,9 +14,10 @@ class RecordManager(private val path: String) {
     /**
      * Содержит информацию о видеозаписи
      */
+    @Suppress("MemberVisibilityCanBePrivate")
     data class Record(
             val path: File,
-            @Suppress("MemberVisibilityCanPrivate") val camName: String,
+            val camName: String,
             val timestamp: Calendar) {
 
         //Используется для вывода названия записи
