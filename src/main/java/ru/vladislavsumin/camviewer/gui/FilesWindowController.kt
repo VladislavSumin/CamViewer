@@ -8,6 +8,7 @@ import javafx.fxml.Initializable
 import javafx.scene.control.Button
 import javafx.scene.control.DatePicker
 import javafx.scene.control.ListView
+import javafx.scene.input.MouseEvent
 import ru.vladislavsumin.camviewer.RecordManager
 import ru.vladislavsumin.camviewer.Static
 import java.net.URL
@@ -38,8 +39,9 @@ class FilesWindowController : Initializable {
         })
 
         Static.recordManager.addOnDataChangeListener {
-            updateFiles(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-            //TODO поправить
+            Platform.runLater{
+                updateFiles(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+            }
         }
         update()
     }
@@ -67,5 +69,9 @@ class FilesWindowController : Initializable {
                 update.isDisable = false
             }
         }
+    }
+
+    fun changeMode(mouseEvent: MouseEvent) {
+        //TODO THIS
     }
 }
