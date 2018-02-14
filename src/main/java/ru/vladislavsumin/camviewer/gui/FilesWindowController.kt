@@ -18,15 +18,16 @@ import java.util.*
 
 class FilesWindowController : Initializable {
 
-    @FXML private lateinit var fileList: ListView<RecordManager.Record>
-    @FXML private lateinit var date: DatePicker
-    @FXML private lateinit var update: Button
+    @FXML
+    private lateinit var fileList: ListView<RecordManager.Record>
+    @FXML
+    private lateinit var date: DatePicker
+    @FXML
+    private lateinit var update: Button
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
-        val calendar = GregorianCalendar()
-        updateFiles(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
-
         date.value = LocalDate.now()
+        updateFiles(date.value.year, date.value.monthValue - 1, date.value.dayOfMonth)
         date.valueProperty().addListener({ _, _, newValue ->
             updateFiles(newValue.year, newValue.monthValue - 1, newValue.dayOfMonth)
         })
@@ -39,8 +40,8 @@ class FilesWindowController : Initializable {
         })
 
         Static.recordManager.addOnDataChangeListener {
-            Platform.runLater{
-                updateFiles(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+            Platform.runLater {
+                updateFiles(date.value.year, date.value.monthValue - 1, date.value.dayOfMonth)
             }
         }
         update()
