@@ -8,7 +8,6 @@ import javafx.fxml.Initializable
 import javafx.scene.control.Button
 import javafx.scene.control.DatePicker
 import javafx.scene.control.ListView
-import javafx.scene.input.MouseEvent
 import ru.vladislavsumin.camviewer.RecordManager
 import ru.vladislavsumin.camviewer.Static
 import java.net.URL
@@ -24,9 +23,32 @@ class FilesWindowController : Initializable {
     private lateinit var date: DatePicker
     @FXML
     private lateinit var update: Button
+    @FXML
+    private lateinit var changeMode: Button
+
+    private enum class Mode {
+        Current {
+            override val recordManager: RecordManager
+                get() = Static.recordManager
+            override val useCalendar: Boolean
+                get() = true
+        },
+        Saved {
+            override val recordManager: RecordManager
+                get() = Static.savedRecordManager
+            override val useCalendar: Boolean
+                get() = false
+        };
+
+        abstract val recordManager: RecordManager;
+        abstract val useCalendar: Boolean
+    }
+
+    private var currentMode: Mode = Mode.Current
 
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         date.value = LocalDate.now()
+
         updateFiles(date.value.year, date.value.monthValue - 1, date.value.dayOfMonth)
         date.valueProperty().addListener({ _, _, newValue ->
             updateFiles(newValue.year, newValue.monthValue - 1, newValue.dayOfMonth)
@@ -49,7 +71,10 @@ class FilesWindowController : Initializable {
 
     private fun updateFiles(year: Int, mont: Int, day: Int) {
         val items = FXCollections.observableArrayList<RecordManager.Record>()
-        items.addAll(Static.recordManager.getSortedList(year, mont, day))
+        if (currentMode.useCalendar)
+            items.addAll(currentMode.recordManager.getSortedList(year, mont, day))
+        else
+            items.addAll(currentMode.recordManager.getSortedList())
         fileList.items = items
     }
 
@@ -64,6 +89,7 @@ class FilesWindowController : Initializable {
     fun update() {
         update.text = "Updating..."
         update.isDisable = true
+        //TODO добавить второй апдейт
         Static.recordManager.updateRecordsFromNewThread {
             Platform.runLater {
                 update.text = "Update"
@@ -72,7 +98,15 @@ class FilesWindowController : Initializable {
         }
     }
 
-    fun changeMode(mouseEvent: MouseEvent) {
-        //TODO THIS
+    fun changeMode() {
+        if (currentMode == Mode.Saved) {
+            currentMode = Mode.Current
+            changeMode.text = "Saved"
+        } else {
+            currentMode = Mode.Saved
+            changeMode.text = "Current"
+        }
+        date.visibleProperty().value = currentMode.useCalendar
+        updateFiles(date.value.year, date.value.monthValue - 1, date.value.dayOfMonth)
     }
 }

@@ -34,7 +34,7 @@
                         BorderPane.alignment="CENTER"/>
             </right>
             <left>
-                <Button mnemonicParsing="false" text="Saved" BorderPane.alignment="CENTER" onMouseClicked="#changeMode"/>
+                <Button fx:id="changeMode" mnemonicParsing="false" text="Saved" BorderPane.alignment="CENTER" onMouseClicked="#changeMode"/>
             </left>
         </BorderPane>
     </children>

@@ -17,8 +17,8 @@ class RecordManager(private val path: String) {
     @Suppress("MemberVisibilityCanBePrivate")
     data class Record(
             val path: File,
-            val camName: String,
-            val timestamp: Calendar) {
+            val camName: String, // имя камеры
+            val timestamp: Calendar) { // время, получается из названия файла
 
         //Используется для вывода названия записи
         override fun toString(): String {
@@ -102,6 +102,23 @@ class RecordManager(private val path: String) {
                     it.timestamp.get(Calendar.YEAR) == year && it.timestamp.get(Calendar.MONTH) == month &&
                             it.timestamp.get(Calendar.DAY_OF_MONTH) == day
                 }).forEach({ data.add(it) })
+            }
+            data.sortBy { record -> record.timestamp }
+            data.reverse()
+            return data
+        }
+    }
+
+    fun getSortedList(cams: Set<String> = list.keys): List<Record> {
+        //TODO опитмизировать
+        synchronized(list) {
+            if (update) {
+                log.debug("Invoke getSortedList on files update")
+                return emptyList()
+            }
+            val data: MutableList<Record> = LinkedList()
+            for (key in cams) {
+                list[key]!!.forEach({ data.add(it) })
             }
             data.sortBy { record -> record.timestamp }
             data.reverse()
